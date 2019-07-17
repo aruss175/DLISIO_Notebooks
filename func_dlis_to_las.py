@@ -1,3 +1,6 @@
+#Work released under MIT License (MIT)
+#Author: Ashley Russell
+
 import os
 import pandas as pd
 import lasio
