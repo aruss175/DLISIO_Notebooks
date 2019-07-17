@@ -9,3 +9,6 @@
 - Also wrote a function that could be used
 - Definitely still needs a lot of testing, I could not get the resultant .las files to open in Petrel.
 - Needs the functionality of manipulating the units on the index track - most depth-indexed .dlis are in 0.1 in.
+
+# License
+Work released under MIT License (MIT)
