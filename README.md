@@ -1,4 +1,5 @@
 # DLISIO_Notebooks
+- Updated to dlisio v0.1.12!
 - Open source, public notebooks for working with DLISIO 
 - Utilizing open data from the Volve field: https://data.equinor.com/dataset/Volve 
   - License: CC BY NC SA
