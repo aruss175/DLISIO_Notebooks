@@ -1,75 +1,104 @@
-#Work released under MIT License (MIT)
-#Author: Ashley Russell
+# python 3.6.8
+# DLISIO v0.1.12
+# numpy v1.16.2
+# pandas v0.24.1
+# lasio v0.23
 
 import os
 import pandas as pd
 import lasio
 import dlisio
+import numpy as np
 
 def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
     filename = os.path.basename(filepath)
     filename = os.path.splitext(filename)[0]
     embedded_files = []
     origins = []
-    object_columns = []
     frame_count = 0
-    object_warning = ''
+
+    def df_column_uniquify(df):
+        df_columns = df.columns
+        new_columns = []
+        for item in df_columns:
+            counter = 0
+            newitem = item
+            while newitem in new_columns:
+                counter += 1
+                newitem = "{}_{}".format(item, counter)
+            new_columns.append(newitem)
+        df.columns = new_columns
+        return df
+
     with dlisio.load(filepath) as file:
+        print(file.describe())
         for d in file:
-            curves_L = []
             embedded_files.append(d)
+            frame_count = 0
             for origin in d.origin:
                 origins.append(origin)
             for fram in d.frames:
                 curves_name = []
                 longs = []
                 unit = []
+                curves_L = []
+                frame_count = frame_count + 1
                 for channel in fram.channels:
                     curves_name.append(channel.name)
                     longs.append(channel.long_name)
                     unit.append(channel.units)
-                frame_count = frame_count + 1
+                    curves = channel.curves()
+                    curves_L.append(curves)
+                name_index = 0
                 las = lasio.LASFile()
-                fingerprint = fram.fingerprint
-                curves = d.curves(fingerprint)
-                curves_L.append(curves)
-                converted_curves = tuple(curves)
-                curves_df = pd.DataFrame.from_records(converted_curves, columns=curves.dtype.names)
-                position = 0
-                places = []
-                for column in curves_df:
-                    position = position + 1
-                    if curves_df[column].dtype.name == 'object':
-                        place = position - 1
-                        places.append(place)
-                        object_columns.append(str(column))
+                curve_df = pd.DataFrame()
+                las_units = []
+                las_longs = []
+                for c in curves_L:
+                    name = curves_name[name_index]
+                    print("Processing " + name)
+                    units = unit[name_index]
+                    long = longs[name_index]
+                    c = np.vstack(c)
+                    try:
+                        num_col = c.shape[1]
+                        col_name = [name] * num_col
+                        df = pd.DataFrame(data=c, columns=col_name)
+                        curve_df = pd.concat([curve_df, df], axis=1)
+                        name_index = name_index + 1
                         object_warning = str(
-                            object_columns) + ' had to be expanded in the final .las file, as it has multiple samples per index'
-                        curves_df = curves_df.assign(
-                            **pd.DataFrame(curves_df[column].values.tolist()).add_prefix(column))
-                        new_columns = list(pd.DataFrame(curves_df[column].values.tolist()).add_prefix(column))
-                        curves_df = curves_df.drop(columns=[column])
-                        curves_name = curves_name + new_columns
-                        longs += len(new_columns) * [longs[place]]
-                        unit += len(new_columns) * [unit[place]]
-                for index in sorted(places, reverse=True):
-                    del curves_name[index]
-                    del longs[index]
-                    del unit[index]
+                            name) + ' had to be expanded in the final .las file, as it has multiple samples per index'
+                    except:
+                        num_col = 1
+                        df = pd.DataFrame(data=c, columns=[name])
+                        name_index = name_index + 1
+                        curve_df = pd.concat([curve_df, df], axis=1)
+                        continue
+                    u = [units] * num_col
+                    l = [long] * num_col
+                    las_units.append(u)
+                    las_longs.append(l)
+                    print("Completed " + name)
+                las_units = [item for sublist in las_units for item in sublist]
+                las_longs = [item for sublist in las_longs for item in sublist]
+
                 # Check that the lists are ready for the curve metadata
                 print("If these are different lengths, something is wrong:")
-                print(len(unit))
+                print(len(las_units))
+                print(len(las_longs))
+                curve_df = df_column_uniquify(curve_df)
+                curves_name = list(curve_df.columns.values)
                 print(len(curves_name))
-                print(len(longs))
-                # the index is always the first curve in the frame.
-                curves_df = curves_df.set_index(curves_name[0])
+
+                # we will take the first curve in the frame as the index.
+                curve_df = curve_df.set_index(curves_name[0])
                 # write the pandas data to the las file
-                las.set_data(curves_df)
+                las.set_data(curve_df)
                 # write the curve metadata from our three lists.
                 counter = 0
                 for x in curves_name:
-                    las.curves[x].unit = unit[counter]
-                    las.curves[x].descr = longs[counter]
+                    las.curves[x].unit = las_units[counter]
+                    las.curves[x].descr = las_longs[counter]
                     counter = counter + 1
                 las.well.COMP = origin.company
                 las.well.WELL = origin.well_name
