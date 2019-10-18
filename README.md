@@ -1,5 +1,5 @@
 # DLISIO_Notebooks
-- Updated to dlisio v0.1.12!
+- Major changes were introduced for version dlisio v0.1.12!  These notebooks reflect those changes.  Currently dlisio is on version 0.1.14.
 - Open source, public notebooks for working with DLISIO 
 - Utilizing open data from the Volve field: https://data.equinor.com/dataset/Volve 
   - License: CC BY NC SA
