@@ -1,0 +1,12 @@
+m2r
+nbformat
+pytest
+os
+dlisio v0.1.14
+numpy v1.16.2
+pandas v0.24.1
+lasio v0.23
+re
+matplotlib
+mayavi
+plotly_express
