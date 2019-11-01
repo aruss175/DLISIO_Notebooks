@@ -2,10 +2,10 @@ m2r
 nbformat
 pytest
 os
-dlisio v0.1.14
-numpy v1.16.2
-pandas v0.24.1
-lasio v0.23
+dlisio >= 0.1.14
+numpy >= 1.16.2
+pandas >= 0.24.1
+lasio >= 0.23
 re
 matplotlib
 mayavi
