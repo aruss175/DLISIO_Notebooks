@@ -1,7 +1,6 @@
 m2r
 nbformat
 pytest
-os
 dlisio >= 0.1.14
 numpy >= 1.16.2
 pandas >= 0.24.1
