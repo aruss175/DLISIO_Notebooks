@@ -6,5 +6,4 @@ def test_header_origin():
         for d in logfile:
             for origin in d.origins:
                 originlength = len(str(origin))
-                print(originlength)
     assert originlength > 0
