@@ -1,5 +1,5 @@
 # python 3.6.8
-# DLISIO v0.1.12
+# DLISIO v0.1.14
 # numpy v1.16.2
 # pandas v0.24.1
 # lasio v0.23
@@ -35,7 +35,7 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
         for d in file:
             embedded_files.append(d)
             frame_count = 0
-            for origin in d.origin:
+            for origin in d.origins:
                 origins.append(origin)
             for fram in d.frames:
                 curves_name = []
