@@ -10,7 +10,8 @@ def test_curve_read():
     curves_L = []
     with dlisio.load(filepath) as logfile:
         for d in logfile:
-            for channel in d.channels:
-                curves = channel.curves()
-                curves_L.append(curves)
+            for fram in d.frames:
+                for channel in fram.channels:
+                    curves = channel.curves()
+                    curves_L.append(curves)
     assert len(curves_L) > 0
