@@ -1,4 +1,5 @@
 import dlisio
+dlisio.set_encodings(['latin1'])
 import os
 import sys
 
