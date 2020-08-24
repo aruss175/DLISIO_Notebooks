@@ -116,7 +116,21 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
                 las.params['VERSION'] = lasio.HeaderItem('VERSION', value=origin.version)
                 las.params['LINEAGE'] = lasio.HeaderItem('LINEAGE', value="Python-converted from DLIS")
                 las.params['ORFILE'] = lasio.HeaderItem('ORFILE', value=filepath)
-                las.write(output_folder_location + "\\" + filename + "_" + 'converted_with_python_' + str(frame_count) + '.las', version=2)
+
+                # -----------------------------------------------------------------------
+                # Write file
+                # -----------------------------------------------------------------------
+                outfile = filename + "_" + "converted_with_python_" + str(frame_count) + ".las"
+                outpath = os.path.join(output_folder_location, outfile)
+
+                if not os.path.exists(output_folder_location):
+                    print("Making output directory: [{}]\n".format(output_folder_location))
+                    os.makedirs(output_folder_location)
+
+                print("Writing: [{}]\n".format(outpath))
+                las.write(outpath, version=2)
+
+
             print("number of frames: " + str(frame_count) + ": this is the number of .las files created")
             print("embedded_files: " + str(len(embedded_files)))
             print("This file has " + str(len(origins)) + " metadata headers.  This code has used the first.")
