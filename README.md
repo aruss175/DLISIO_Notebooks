@@ -1,6 +1,7 @@
 [![Build Status](https://dev.azure.com/ARUSS0458/dlisio_public_notebooks/_apis/build/status/aruss175.DLISIO_Notebooks?branchName=master)](https://dev.azure.com/ARUSS0458/dlisio_public_notebooks/_build/latest?definitionId=1&branchName=master)
 
 # DLISIO_Notebooks
+- Added the notebook that I will be demoing at AAPG ACE Sept 29!
 - Open source, public notebooks for working with DLISIO 
 - Utilizing open data from the Volve field: https://data.equinor.com/dataset/Volve 
   - License: CC BY NC SA
