@@ -6,5 +6,4 @@ numpy >= 1.16.2
 pandas >= 0.24.1
 lasio >= 0.23
 matplotlib
-mayavi
 plotly_express
