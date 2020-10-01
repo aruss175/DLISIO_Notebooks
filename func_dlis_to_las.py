@@ -89,10 +89,13 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
                 print(len(las_longs))
                 curve_df = df_column_uniquify(curve_df)
                 curves_name = list(curve_df.columns.values)
+                reordered_curves_name = move_valid_index_to_first_col(curves_name)
+                curve_df = curve_df.reindex(reordered_curves_name, axis=1)
+
                 print(len(curves_name))
 
                 # we will take the first curve in the frame as the index.
-                curve_df = curve_df.set_index(curves_name[0])
+                curve_df = curve_df.set_index(reordered_curves_name[0])
                 # write the pandas data to the las file
                 las.set_data(curve_df)
                 # write the curve metadata from our three lists.
@@ -135,3 +138,18 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
             print("embedded_files: " + str(len(embedded_files)))
             print("This file has " + str(len(origins)) + " metadata headers.  This code has used the first.")
             print(object_warning)
+
+
+def move_valid_index_to_first_col(curves_name):
+    idx_col = 0
+    for curve in ['DEPT', 'DEPTH', 'TIME', 'INDEX']:
+        if curve in curves_name:
+            idx_col = curves_name.index(curve)
+            break
+
+    reordered_curves_name = curves_name[idx_col:idx_col+1]
+    reordered_curves_name.extend(curves_name[:idx_col])
+    reordered_curves_name.extend(curves_name[idx_col+1:])
+
+    return reordered_curves_name
+
