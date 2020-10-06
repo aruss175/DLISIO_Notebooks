@@ -17,19 +17,6 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
     embedded_files = []
     origins = []
 
-    def df_column_uniquify(df):
-        df_columns = df.columns
-        new_columns = []
-        for item in df_columns:
-            counter = 0
-            newitem = item
-            while newitem in new_columns:
-                counter += 1
-                newitem = "{}_{}".format(item, counter)
-            new_columns.append(newitem)
-        df.columns = new_columns
-        return df
-
     with dlisio.load(filepath) as file:
         print(file.describe())
         for d in file:
@@ -40,7 +27,7 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
             for fram in d.frames:
                 frame_count = frame_count + 1
 
-                c2l = {
+                channel_data = {
                     "curves_name": [],
                     "longs": [],
                     "unit": [],
@@ -54,14 +41,16 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
                 # Process channel/curve information
                 # -----------------------------------------------------------------------
                 for channel in fram.channels:
-                    c2l["curves_name"].append(channel.name)
-                    c2l["longs"].append(channel.long_name)
-                    c2l["unit"].append(channel.units)
+                    channel_data["curves_name"].append(channel.name)
+                    channel_data["longs"].append(channel.long_name)
+                    channel_data["unit"].append(channel.units)
                     curves = channel.curves()
-                    c2l["curves_L"].append(curves)
-                las_units, las_longs, curve_df, object_warning = process_curve_info(c2l)
+                    channel_data["curves_L"].append(curves)
 
-                curve_df = df_column_uniquify(curve_df)
+                las_units, las_longs, curve_df, object_warning = process_curve_info(
+                    channel_data
+                )
+
                 curves_name = list(curve_df.columns.values)
                 reordered_curves_name = move_valid_index_to_first_col(curves_name)
                 curve_df = curve_df.reindex(reordered_curves_name, axis=1)
@@ -74,6 +63,7 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
                 # -----------------------------------------------------------------------
                 # Create las file
                 # -----------------------------------------------------------------------
+
                 las = create_las(
                     curve_df, curves_name, origin, las_units, las_longs, null, filepath
                 )
@@ -103,40 +93,54 @@ def move_valid_index_to_first_col(curves_name):
     return reordered_curves_name
 
 
-def process_curve_info(c2l):
-    for name_index, c in enumerate(c2l["curves_L"]):
-        name = c2l["curves_name"][name_index]
+def process_curve_info(channel_data):
+    def df_column_uniquify(df):
+        df_columns = df.columns
+        new_columns = []
+        for item in df_columns:
+            counter = 0
+            newitem = item
+            while newitem in new_columns:
+                counter += 1
+                newitem = "{}_{}".format(item, counter)
+            new_columns.append(newitem)
+        df.columns = new_columns
+        return df
+
+    for name_index, c in enumerate(channel_data["curves_L"]):
+        name = channel_data["curves_name"][name_index]
         print("Processing " + name)
-        units = c2l["unit"][name_index]
-        long = c2l["longs"][name_index]
+        units = channel_data["unit"][name_index]
+        long = channel_data["longs"][name_index]
         c = np.vstack(c)
         try:
             num_col = c.shape[1]
             col_name = [name] * num_col
             df = pd.DataFrame(data=c, columns=col_name)
-            c2l["curve_df"] = pd.concat([c2l["curve_df"], df], axis=1)
+            channel_data["curve_df"] = pd.concat([channel_data["curve_df"], df], axis=1)
             object_warning = str(
                 name) + ' had to be expanded in the final .las file, as it has multiple samples per index'
         except:
             num_col = 1
             df = pd.DataFrame(data=c, columns=[name])
-            c2l["curve_df"] = pd.concat([c2l["curve_df"], df], axis=1)
+            channel_data["curve_df"] = pd.concat([channel_data["curve_df"], df], axis=1)
             continue
         u = [units] * num_col
         l = [long] * num_col
-        c2l["las_units"].append(u)
-        c2l["las_longs"].append(l)
+        channel_data["las_units"].append(u)
+        channel_data["las_longs"].append(l)
         print("Completed " + name)
 
-    las_units = [item for sublist in c2l["las_units"] for item in sublist]
-    las_longs = [item for sublist in c2l["las_longs"] for item in sublist]
+    las_units = [item for sublist in channel_data["las_units"] for item in sublist]
+    las_longs = [item for sublist in channel_data["las_longs"] for item in sublist]
 
     # Check that the lists are ready for the curve metadata
     print("If these are different lengths, something is wrong:")
     print(len(las_units))
     print(len(las_longs))
 
-    return las_units, las_longs, c2l["curve_df"], object_warning
+    curve_df = df_column_uniquify(channel_data["curve_df"])
+    return las_units, las_longs, curve_df, object_warning
 
 
 def create_las(curve_df, curves_name, origin, las_units, las_longs, null, filepath):
