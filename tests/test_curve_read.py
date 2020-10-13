@@ -9,10 +9,8 @@ dlisio.set_encodings(["latin1"])
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from func_dlis_to_las import (
-    move_valid_index_to_first_col,
-    process_curve_info
-)
+# Follows sys.path.insert so that func_dlis_to_las is found
+from func_dlis_to_las import process_curve_info
 
 
 def test_curve_read():
@@ -26,13 +24,6 @@ def test_curve_read():
                 depth_array = channel.curves()
                 print(len(depth_array))
     assert len(depth_array) > 0
-
-
-def test_index_is_first_col():
-    curves_name = ["TDEP", "DEPTH"]
-    reordered_curves = move_valid_index_to_first_col(curves_name)
-    assert reordered_curves[0] == "DEPTH"
-    assert reordered_curves[1] == "TDEP"
 
 
 def test_process_curve_info():
