@@ -1,5 +1,5 @@
 # python 3.6.8
-# DLISIO v0.1.15
+# DLISIO v0.3.5
 # numpy v1.16.2
 # pandas v0.24.1
 # lasio v0.23
@@ -8,7 +8,6 @@ import os
 import pandas as pd
 import lasio
 import dlisio
-dlisio.set_encodings(['latin1'])
 import numpy as np
 
 def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
@@ -17,7 +16,7 @@ def convert_dlis_to_las(filepath, output_folder_location, null=-999.25):
     embedded_files = []
     origins = []
 
-    with dlisio.load(filepath) as file:
+    with dlisio.dlis.load(filepath) as file:
         print(file.describe())
         for d in file:
             embedded_files.append(d)
