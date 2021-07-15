@@ -12,5 +12,7 @@
 # DLIS to LAS
 - There is a notebook and a set of functions for a Dlis to las file converter.  Thanks for the help on this one!
 
-# License
+# License and Use
+I hope this work can be useful for any geoscientist working in academia, during a hackathon, or at a company dealing with subsurface well data.  I am a firm believer that file format parsing and file type conversions should not come at a cost in this day and age.
+
 Work released under MIT License (MIT)
