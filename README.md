@@ -3,16 +3,21 @@
 - Examples of the functionality in the dlisio package
 - Utilizing open data from the Volve field: https://data.equinor.com/dataset/Volve 
   - License: CC BY NC SA
-- **DLISIO still in development** https://pypi.org/project/dlisio/ - this means that I will try and keep the notebook up to date with changes as they occur, but things will break, please also read their Read The Docs https://dlisio.readthedocs.io/en/stable
+- Also utilizing data from the NOPIMS dataset: https://nopims.dmp.wa.gov.au/nopims
 
 # Current Status
-- dlisio recently added lis parsing functionality.  I have just added a new notebook to demonstrate how to go from a .lis file to a dataframe, and to examine the .lis headers.
-- Will continue to transform this into the coveted .lis to .las conversion!
+- dlisio has had a stable production release at the end of 2023 - dlisio v1.0
+- Notebooks are updated to reflect an update in packages and python base to 3.11 - please check the requirements.txt file.
 
 # DLIS to LAS
 - There is a notebook and a set of functions for a Dlis to las file converter.  Thanks for the help on this one!
 
+# LIS to LAS
+- There is a notebook and a set of functions for a las to las file converter.  
+
 # License and Use
 I hope this work can be useful for any geoscientist working in academia, during a hackathon, or at a company dealing with subsurface well data.  I am a firm believer that file format parsing and file type conversions should not come at a cost in this day and age.
+
+I can't promise the code is perfectly written, and as a non-professional developer, I appreciate all feedback.  Make an issue or change the code and submit a pull request!
 
 Work released under MIT License (MIT)
