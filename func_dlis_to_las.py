@@ -1,8 +1,8 @@
-# python 3.6.8
-# DLISIO v0.3.5
-# numpy v1.16.2
-# pandas v0.24.1
-# lasio v0.23
+# python 3.11.8
+# DLISIO v1.0.1
+# numpy v1.26.3
+# pandas v2.2.0
+# lasio v0.31
 
 import os
 import pandas as pd

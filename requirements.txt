@@ -1,9 +1,13 @@
 m2r
 nbformat
 pytest
-dlisio >= 0.3.5
-numpy >= 1.16.2
-pandas >= 0.24.1
-lasio >= 0.23
+mayavi
+configobj
+dlisio >= 1.0.1
+numpy >= 1.26.3
+pandas >= 2.2.0
+lasio >= 0.31
 matplotlib
 plotly_express
+
+
